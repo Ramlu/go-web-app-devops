@@ -1,7 +1,10 @@
 package main
 
 import (
+<<<<<<< HEAD
 	"log"
+=======
+>>>>>>> 0c69a20 (feat: web application in golang using net/http)
 	"net/http"
 )
 
@@ -32,8 +35,12 @@ func main() {
 	http.HandleFunc("/about", aboutPage)
 	http.HandleFunc("/contact", contactPage)
 
+<<<<<<< HEAD
 	err := http.ListenAndServe("0.0.0.0:8081", nil)
 	if err != nil {
 		log.Fatal(err)
 	}
+=======
+	http.ListenAndServe(":8080", nil)
+>>>>>>> 0c69a20 (feat: web application in golang using net/http)
 }
