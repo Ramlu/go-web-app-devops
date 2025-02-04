@@ -1,31 +1,38 @@
-FROM golang:1.23-alpine AS base
+# Containerize the go application that we have created
+# This is the Dockerfile that we will use to build the image
+# and run the container
 
-# Step 2: Set the Current Working Directory inside the container
+# Start with a base image
+FROM golang:1.21 as base
+
+# Set the working directory inside the container
 WORKDIR /app
 
-# Step 3: Copy the Go Modules files and download the dependencies
+# Copy the go.mod and go.sum files to the working directory
 COPY go.mod ./
 
-RUN go mod donwload 
+# Download all the dependencies
+RUN go mod download
 
-# Step 4: Copy the entire Go source code into the container
+# Copy the source code to the working directory
 COPY . .
 
-# Step 5: Build the Go app
+# Build the application
 RUN go build -o main .
 
-# Step 6: Start a new stage for a smaller image using Alpine
-FROM gcr.io/distroless/base 
+#######################################################
+# Reduce the image size using multi-stage builds
+# We will use a distroless image to run the application
+FROM gcr.io/distroless/base
 
-# Step 9: Copy the compiled binary from the builder stage
+# Copy the binary from the previous stage
 COPY --from=base /app/main .
 
-COPY --from=base /app/static .
+# Copy the static files from the previous stage
+COPY --from=base /app/static ./static
 
-# Step 10: Expose the port your app will run on (optional)
+# Expose the port on which the application will run
 EXPOSE 8080
 
-# Step 11: Run the Go binary
+# Command to run the application
 CMD ["./main"]
-
-# CMD ["go","run","main.go"]
